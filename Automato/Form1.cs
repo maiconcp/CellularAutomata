@@ -30,11 +30,21 @@ namespace Automato
         public const int MarginTop = 50;
         private void Automata1()
         {
-            Refresh();
-
-            var graphicsObj = this.CreateGraphics();
-
             var cron = Stopwatch.StartNew();
+
+            var iterations = Generate();
+
+            Text = $"Time Generations: {cron.ElapsedMilliseconds}";
+
+            Draw(iterations);
+
+            cron.Stop();
+
+            Text += $" = Total: {cron.ElapsedMilliseconds}";
+        }
+
+        private List<Population> Generate()
+        {
             var iterations = new List<Population>();
             var population = new Population(1024);
             iterations.Add(population);
@@ -45,17 +55,15 @@ namespace Automato
                 iterations.Add(population);
             }
 
-            Text = $"Time Generations: {cron.ElapsedMilliseconds}";
-
-            population = Draw(graphicsObj, iterations, population);
-
-            cron.Stop();
-
-            Text += $" = Total: {cron.ElapsedMilliseconds}";
+            return iterations;
         }
 
-        private static Population Draw(Graphics graphicsObj, List<Population> iterations, Population population)
+        private void Draw(List<Population> iterations)
         {
+            Refresh();
+            var population = iterations.First();
+            var graphicsObj = this.CreateGraphics();
+
             for (int y = 0; y < population.Size / 2; y++)
             {
                 population = iterations[y];
@@ -65,8 +73,6 @@ namespace Automato
                         graphicsObj.FillRectangle(Brushes.Black, MarginLeft + x, MarginTop + y, 1, 1);
                 };
             }
-
-            return population;
         }
 
         private void ChkRules_CheckedChanged(object sender, EventArgs e)
