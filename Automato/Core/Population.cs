@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Automato.Core
 {
-    public struct Population
+    public class Population
     {
         public int Size { get; }
         public Cell[] Cells { get; }
@@ -31,12 +31,13 @@ namespace Automato.Core
         public Population ApplyRules(Rule[] rules)
         {
             var newGeneration = new Population(Size);
-            for (int i = 0; i < Size; i++)
+
+            Parallel.For(0, Size, i =>
             {
                 var neighbours = new Neighbours(this, i);
 
                 newGeneration.Cells[i] = rules.Any(rule => neighbours.IsValidRule(rule));
-            }
+            });
 
             return newGeneration;
         }
